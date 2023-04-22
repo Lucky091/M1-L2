@@ -1,12 +1,38 @@
-import random
+import discord
+from discord.ext import commands
 
-chars = '+-/*!&$#?=@<>abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-number = input('Сколько вы хотите паролей?'+ "\n")
-length = input('Какую длину этих паролей вы хотите?'+ "\n")
-number = int(number)
-length = int(length)
-for n in range(number):
-    password =''
-    for i in range(length):
-        password += random.choice(chars)
-    print(password)
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+@bot.event
+async def on_ready():
+    print(f'We have logged in as {bot.user}')
+
+@bot.command()
+async def hello(ctx):
+    await ctx.send(f'Привет! Я бот {bot.user}!')
+
+@bot.command()
+async def heh(ctx, count_heh = 5):
+    await ctx.send("he" * count_heh)
+
+@bot.command(name='bot')
+async def _bot(ctx):
+    """Is the bot cool?"""
+    await ctx.send('Yes, the bot is cool.')
+
+@bot.command()
+async def joined(ctx, member: discord.Member):
+    """Says when a member joined."""
+    await ctx.send(f'{member.name} joined {discord.utils.format_dt(member.joined_at)}')
+
+@bot.command()
+async def repeat(ctx, times: int, content='repeating...'):
+    """Repeats a message multiple times."""
+    for i in range(times):
+        await ctx.send(content)
+
+
+bot.run("Token")
